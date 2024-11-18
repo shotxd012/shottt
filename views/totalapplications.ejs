@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Applications List</title>
+    <style>
+        :root {
+            --primary-color: #13bb56;
+            --background-color: #191a1d;
+            --sidebar-color: #121313;
+            --text-color: #ffffff;
+            --text-muted: #4cde2d;
+            --card-background: #101113;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .user-details h2 {
+            font-size: 16px;
+        }
+        
+        .user-details p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: var(--text-color);
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item svg {
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        h1, h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .application-category {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        ul {
+            list-style-type: none;
+        }
+        
+        li {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .action-links {
+            margin-top: 10px;
+        }
+        
+        .action-links button, .action-links a {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .action-links .reject-button {
+            background-color: #ff4d4d;
+        }
+        
+        .action-links .delete-link {
+            background-color: #ff4d4d;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 10px 0;
+                overflow-x: auto;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="user-info">
+            <img src="https://i.imgur.com/FYYcF5j.png" alt="User Avatar" class="user-avatar">
+            <div class="user-details">
+                <h2><%= user.username %></h2>
+                <p>Admin User</p>
+            </div>
+        </div>
+        <nav>
+            <a href="/" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Home
+            </a>
+            <a href="/admin" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M10 8v8"/><path d="M14 8v8"/><path d="M2 12h20"/></svg>
+                Admin Dashboard
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M12 10h.01"/></svg>
+                Applications
+            </a>
+        </nav>
+        <a href="/admin/logout" class="nav-item" style="margin-top: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            Logout
+        </a>
+    </aside>
+
+    <main class="main-content">
+        <h1>Total Applications List</h1>
+
+        <div class="application-category">
+            <h2>Pending Applications</h2>
+            <ul>
+                <% pending.forEach(application => { %>
+                    <li>
+                        <strong>Username:</strong> <%= application.username %> <br>
+                        <strong>Email:</strong> <%= application.email %> <br>
+                        <strong>Discord ID:</strong> <%= application.discordId %> 
+                        <div class="action-links">
+                            <form action="/admin/applications/<%= application._id %>/accept" method="post" style="display: inline;">
+                                <button type="submit">Accept</button>
+                            </form>
+                            <form action="/admin/applications/<%= application._id %>/reject" method="post" style="display: inline;">
+                                <button type="submit" class="reject-button">Reject</button>
+                            </form>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+
+        <div class="application-category">
+            <h2>Accepted Applications</h2>
+            <ul>
+                <% accepted.forEach(application => { %>
+                    <li>
+                        <strong>Username:</strong> <%= application.username %> <br>
+                        <strong>Email:</strong> <%= application.email %> <br>
+                        <strong>Discord ID:</strong> <%= application.discordId %> 
+                        <div class="action-links">
+                            <a href="/admin/applications/delete/<%= application._id %>" class="delete-link">Delete</a>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+
+        <div class="application-category">
+            <h2>Rejected Applications</h2>
+            <ul>
+                <% rejected.forEach(application => { %>
+                    <li>
+                        <strong>Username:</strong> <%= application.username %> <br>
+                        <strong>Email:</strong> <%= application.email %> <br>
+                        <strong>Discord ID:</strong> <%= application.discordId %> 
+                    </li>
+                <% }) %>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        document.onkeydown = e => {
+            if (e.key === "F12") {
+                alert("Don't try to inspect element");
+                return false;
+            }
+            if (e.ctrlKey && e.key === "u") {
+                alert("Don't try to view page source");
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === "I") {
+                alert("Don't try to open developer tools");
+                return false;
+            }
+        };
+
+        document.oncontextmenu = e => {
+            alert("Right-click is disabled");
+            return false;
+        };
+    </script>
+</body>
+</html>

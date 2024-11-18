@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vazha 0.1</title>
+    <meta name="title" content="Vazha" />
+    <meta name="description" content="Powerful multipurpose bot" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vazha.fun/" />
+    <meta property="og:title" content="Vazha 0.1" />
+    <meta property="og:image" content="https://media.discordapp.net/attachments/1105342814629404692/1259900617137197149/shot.jpg?ex=669740a2&is=6695ef22&hm=020e08f29f51581085f761780fd61621f63b169c0d9e4242f654a9d959f35408&=&format=webp&width=402&height=402">
+    <meta property="og:description" content="The best powerful multipurpose discord bot" />
+    <meta property="twitter:url" content="https://vazha.fun" />
+    <meta property="twitter:title" content="Vazha 0.1" />
+    <meta property="twitter:description" content="A best Powerful multipurpose bot" />
+	<link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+</head>
+<body>
+    <div id="customAlert" class="alert hide">
+        <span id="alertMessage"></span>
+        <div class="timeout-line"></div>
+    </div>
+
+    <header>
+      <nav>
+          <div class="logo">
+              <img src="https://i.imgur.com/FYYcF5j.png" alt="Vazha Bot Logo" class="logo-img">
+              Vazha Bot
+          </div>
+          <button class="mobile-menu-toggle" aria-label="Toggle menu">
+              <span></span>
+              <span></span>
+              <span></span>
+          </button>
+          <ul class="nav-menu">
+              <li><a href="#features">Features</a></li>
+              <li><a href="#testimonials">Hosting Partner</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <% if (user) { %>
+                  <li><a href="/profile">Profile</a></li>
+                  <li><a href="/admin-servers">Manage Server</a></li>
+                  <li><a href="/status">Status</a></li>
+                  <li class="user-menu">
+                      <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="User Avatar" class="user-avatar" onclick="toggleDropdown()">
+                      <div class="dropdown-menu">
+                          <a href="/logout">Logout</a>
+                      </div>
+                  </li>
+              <% } else { %>
+                  <li><a href="/login">Login</a></li>
+              <% } %>
+          </ul>
+      </nav>
+  </header>
+  
+<main>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-logo">
+        <img src="https://i.imgur.com/FYYcF5j.png" alt="Bot Logo" class="bot-logo">
+      </div>
+      <div class="hero-text">
+        <h1>Welcome to Vazha Dashboard</h1>
+        <p>A powerful multipurpose bot for your Discord server</p>
+        <div class="cta-buttons">
+          <a href="https://discord.com/oauth2/authorize?client_id=1104774535930187846&permissions=8&integration_type=0&scope=bot+applications.commands" class="button primary">Invite Me!</a>
+          <a href="https://discord.gg/2YP7tASbwy" class="button secondary">Support Server</a>
+        </div>
+      </div>
+    </div>
+  </section>
+        <section id="features" class="features">
+            <h2>Bot Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-music feature-icon"></i>
+                    <h3>Music Streaming</h3>
+                    <p>Enjoy high-quality music streaming from your favorite platforms directly in your Discord server.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                    <h3>Moderation Tools</h3>
+                    <p>Automated moderation tools to keep your server safe and organized with minimal effort.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-gamepad feature-icon"></i>
+                    <h3>Fun and Games</h3>
+                    <p>Engage your community with a wide range of fun commands, trivia, and interactive games.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line feature-icon"></i>
+                    <h3>Advanced Analytics</h3>
+                    <p>Track user engagement and server activity with comprehensive analytics and reports.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials">
+            <h2>What Users Are Saying</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p>"Vazha has completely transformed how we manage our community. Highly recommended!"</p>
+                </div>
+                <div class="testimonial-card">
+                    <p>"The best multipurpose bot out there! It's incredibly easy to use."</p>
+                </div>
+                <div class="testimonial-card">
+                    <p>"Amazing features and great support. Vazha is a must-have for any server."</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="hosting">
+            <div class="hosting-content">
+                <h2>Plexanodes Hosting</h2>
+                <p>Plexanodes is one of the most high-performance game and Discord bot hosting companies, offering both free and paid hosting options.</p>
+                <a href="https://i.imgur.com/anlDsrr.png" class="button secondary">Plexanodes Discord</a>
+            </div>
+            <div class="hosting-image">
+                <img src="https://i.imgur.com/anlDsrr.png" alt="Plexanodes Hosting">
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <h2>Contact Us</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <span>Email: <a href="mailto:support@vazha.fun">support@vazha.fun</a></span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-globe contact-icon"></i>
+                        <span>Country: India</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-discord contact-icon"></i>
+                        <span>Join our <a href="https://discord.gg/2YP7tASbwy">Discord Support Server</a></span>
+                    </div>
+                </div>
+                <form id="contactForm" action="/submit-contact" method="POST" class="contact-form">
+                    <input type="text" id="discordName" name="discordName" placeholder="Your Discord Name" required>
+                    <input type="email" id="email" name="email" placeholder="Your Gmail" required>
+                    <input type="text" id="subject" name="subject" placeholder="Subject" required>
+                    <textarea id="message" name="message" placeholder="Message" rows="4" required></textarea>
+                    <textarea id="bugReport" name="bugReport" placeholder="Bug Report (Optional)" rows="3"></textarea>
+                    <button type="submit" class="button primary">Submit</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="owner">
+            <div class="owner-content">
+                <h2>Owner: Shot XD</h2>
+                <p>For any queries or support, feel free to reach out directly:</p>
+                <a href="https://discord.com/users/871770826557517914" class="button secondary">Send a DM on Discord</a>
+            </div>
+            <div class="owner-image">
+                <img src="https://i.imgur.com/glUpGaJ.png" alt="Owner Image">
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <ul class="footer-social">
+            <li><a href="https://discord.com/oauth2/authorize?client_id=1104774535930187846&permissions=8&integration_type=0&scope=bot+applications.commands"><i class='bx bxs-plus-circle bx-tada'></i></a></li>
+            <li><a href="http://www.vazha.fun/status"><i class='bx bx-station bx-tada'></i></a></li>
+            <li><a href="https://discord.gg/2YP7tASbwy"><i class='bx bxl-discord-alt bx-flip-horizontal bx-tada'></i></a></li>
+            <li><a href="/admin"><i class='bx bxs-cog bx-tada'></i></a></li>
+        </ul>
+        <ul>
+            <li><a href="/terms"><i class='bx bx-right-arrow-alt bx-flashing' ></i></a>    Terms</li>
+            <li><a href="/policy"><i class='bx bx-right-arrow-alt bx-flashing' ></i></a>    policy</li>
+        </ul>
+        
+        <p>&copy; 2023 Vazha Bot. All rights reserved.</p>
+    </footer>
+
+    <script>
+
+document.querySelector('.mobile-menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+
+  function toggleDropdown() {
+    var userMenu = document.querySelector('.user-menu');
+    userMenu.classList.toggle('active');
+  }
+  document.addEventListener('click', function(event) {
+    var userMenu = document.querySelector('.user-menu');
+    if (!userMenu.contains(event.target)) {
+      userMenu.classList.remove('active');
+    }
+  });
+        document.onkeydown = e => {
+    if (e.key === "F12") {
+        showAlert("Don't try to inspect element");
+        return false;
+    }
+    if (e.ctrlKey && e.key === "u") {
+        showAlert("Don't try to view page source");
+        return false;
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === "I") {
+        showAlert("Don't try to open developer tools");
+        return false;
+    }
+};
+
+document.oncontextmenu = e => {
+    showAlert("Right-click is disabled");
+    return false;
+};
+
+function showAlert(message) {
+    const alertBox = document.getElementById('customAlert');
+    const alertMessage = document.getElementById('alertMessage');
+    const timeoutLine = alertBox.querySelector('.timeout-line');
+    alertMessage.textContent = message;
+    
+    timeoutLine.style.transition = 'none'; 
+    timeoutLine.style.width = '100%';
+    timeoutLine.offsetHeight; 
+    timeoutLine.style.transition = 'width 3s linear';  
+    setTimeout(() => {
+        timeoutLine.style.width = '0';
+    }, 100); 
+
+    alertBox.classList.remove('hide');
+    alertBox.classList.add('show');
+    
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+        alertBox.classList.add('hide');
+    }, 3000);  // Hide alert after 3 seconds
+}
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 1000);
+        });
+            document.getElementById('contactForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const discordName = document.getElementById('discordName').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        const bugReport = document.getElementById('bugReport').value;
+
+        const response = await fetch('/submit-contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ discordName, email, subject, message, bugReport })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            showAlert('Message sent successfully!');
+            document.getElementById('contactForm').reset();
+        } else {
+            showAlert('Failed to send message. Please try again.');
+        }
+    });
+    </script>
+</body>
+</html>

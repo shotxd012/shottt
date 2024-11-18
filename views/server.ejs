@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #13bb56;
+            --secondary-color: #19eb2b00;
+            --background-color: #191a1d;
+            --sidebar-color: #121313;
+            --text-color: #ffffff;
+            --text-muted: #4cde2d;
+            --card-background: #101113;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .user-details h2 {
+            font-size: 16px;
+        }
+
+        .user-details p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: var(--text-color);
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 20px;
+        }
+
+        .server-info {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .server-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .server-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .server-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        .section {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .select-menu {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .save-button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+
+        .save-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 10px 0;
+                overflow-x: auto;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .nav-item {
+                flex-direction: column;
+                align-items: center;
+                margin: 0 5px;
+                padding: 5px;
+            }
+
+            .nav-item i {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+
+            .main-content {
+                padding: 20px 10px;
+            }
+
+            .server-details {
+                grid-template-columns: 1fr;
+            }
+
+            .section-controls {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .toggle-button {
+                margin-bottom: 10px;
+            }
+        }
+        .alert {
+            position: fixed;
+            top: 50px; 
+            right: -100%; 
+            background-color: lightgreen;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0; 
+            transition: right 0.5s ease, opacity 0.5s ease;
+        }
+
+        .alert.show {
+            right: 40px;
+            opacity: 1;
+        }
+
+        .alert.hide {
+            right: -100%;
+            opacity: 0;
+        }
+
+        .alert .timeout-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            transition: width 3s linear;
+        }
+    </style>
+</head>
+<div id="customAlert" class="alert hide">
+    <span id="alertMessage"></span>
+    <div class="timeout-line"></div>
+</div>
+<body>
+    <div class="sidebar">
+        <div class="user-info">
+            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="User Avatar" class="user-avatar">
+            <div class="user-details">
+                <h2><%= user.username %></h2>
+                <p>Premium User</p>
+            </div>
+        </div>
+        <a href="/" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/admin-servers" class="nav-item"><i class="fas fa-server"></i><span>Servers</span></a>
+        <a href="/status" class="nav-item"><i class="fas fa-info-circle"></i><span>Status</span></a>
+        <a href="/logout" class="nav-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </div>
+
+    <div class="main-content">
+        <div class="server-info">
+            <div class="server-header">
+                <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png" alt="Server Icon" class="server-icon">
+                <h2><%= guild.name %></h2>
+            </div>
+            <div class="server-details">
+                <div class="info-box">
+                    <p><strong>ID:</strong> <%= guild.id %></p>
+                    <p><strong>Total Members:</strong> <%= serverDetails.memberCount %></p>
+                    <p><strong>Bots:</strong> <%= serverDetails.botCount %></p>
+                    <p><strong>Total Channels:</strong> <%= serverDetails.totalChannels %></p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Text Channels:</strong> <%= serverDetails.textChannels %></p>
+                    <p><strong>Voice Channels:</strong> <%= serverDetails.voiceChannels %></p>
+                    <p><strong>Threads:</strong> <%= serverDetails.threads %></p>
+                    <p><strong>Categories:</strong> <%= serverDetails.categories %></p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Created:</strong> <%= new Date(serverDetails.createdTimestamp).toLocaleDateString() %></p>
+                    <p><strong>Owner:</strong> <a href="https://discord.com/users/<%= serverDetails.ownerId %>"><%= serverDetails.ownerId %></a></p>
+                    <p><strong>NSFW Level:</strong> <%= serverDetails.nsfwLevel %></p>
+                    <p><strong>Verification Level:</strong> <%= serverDetails.verificationLevel %></p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Emojis:</strong> Animated <%= serverDetails.animatedEmojis %>, Static <%= serverDetails.staticEmojis %></p>
+                    <p><strong>Stickers:</strong> <%= serverDetails.stickers %></p>
+                    <p><strong>Nitro Tier:</strong> <%= serverDetails.premiumTier %></p>
+                    <p><strong>Boosts:</strong> <%= serverDetails.premiumSubscriptionCount %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-controls">
+            <button class="toggle-button" onclick="toggleSection('basicsSection')">Basics</button>
+            <button class="toggle-button" onclick="toggleSection('allowedChannelsSection')">Allowed Channels</button>
+            <button class="toggle-button" onclick="toggleSection('blacklistedWordsSection')">Blacklisted Words</button>
+            <button class="toggle-button" onclick="toggleSection('welcomeSection')">Welcome</button>
+            <button class="toggle-button" onclick="toggleSection('leaveSection')">Leave</button>
+            <button class="toggle-button" onclick="toggleSection('boostSection')">Boost</button>
+            <button class="toggle-button" onclick="toggleSection('logChannelSection')">Log Channel</button>
+            <button class="toggle-button" onclick="toggleSection('auditLogSection')">Audit Log</button>
+        </div>
+
+        <!-- Basics Section -->
+        <div id="basicsSection" class="section" style="display: none;">
+            <h3>Basics</h3>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="levels" <%= levelsEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="levels">Levels</label>
+            </div>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="antilinks" <%= antilinksEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="antilinks">Anti-Links</label>
+            </div>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="antiinvite" <%= antiinviteEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="antiinvite">Anti-Invite</label>
+            </div>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="antispam" <%= antispamEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="antispam">Anti-Spam</label>
+            </div>
+            <button class="save-button" onclick="saveSettings()">Save</button>
+        </div>
+
+        <!-- Allowed Channels Section -->
+        <div id="allowedChannelsSection" class="section" style="display: none;">
+            <h3>Allowed Channels for Link</h3>
+            <select class="select-menu" id="channel">
+                <% guild.channels.cache.forEach(channel => { %>
+                    <option value="<%= channel.id %>"><%= channel.name %></option>
+                <% }); %>
+            </select>
+            <button class="save-button" onclick="addChannel()">Add Channel</button>
+            <div id="allowedChannels">
+                <% allowedChannels.forEach(channel => { %>
+                    <div>
+                        <span><%= channel.name %></span>
+                        <button class="save-button" onclick="removeAllowedChannel('<%= channel.id %>')">Remove</button>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Blacklisted Words Section -->
+        <div id="blacklistedWordsSection" class="section" style="display: none;">
+            <h3>Blacklisted Words</h3>
+            <input type="text" class="select-menu" id="word" placeholder="Enter word to blacklist">
+            <button class="save-button" onclick="addWord()">Add Word</button>
+            <div id="blacklistContainer">
+                <% if (blacklistedWords.length > 0) { %>
+                    <% blacklistedWords.forEach(word => { %>
+                        <div>
+                            <span><%= word %></span>
+                            <button class="save-button" onclick="removeWord('<%= word %>')">Remove</button>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>No blacklisted words.</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div id="welcomeSection" class="section" style="display: none;">
+            <h3>Welcome Channel</h3>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="welcome" <%= welcomeEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="welcome">Enable Welcome Channel</label>
+            </div>
+            <select class="select-menu" id="welcomeChannel">
+                <% guild.channels.cache.forEach(channel => { %>
+                    <option value="<%= channel.id %>" <%= channel.id === welcomeChannelId ? 'selected' : '' %>><%= channel.name %></option>
+                <% }); %>
+            </select>
+            <button class="save-button" onclick="saveWelcomeChannel()">Save Channel</button>
+            <h3>Welcome Message</h3>
+            <textarea class="select-menu" id="welcomeMessage" rows="5"><%= welcomeMessage %></textarea>
+            <button class="save-button" onclick="saveWelcomeMessage()">Save Message</button>
+        </div>
+
+        <!-- Leave Section -->
+        <div id="leaveSection" class="section" style="display: none;">
+            <h3>Leave Channel</h3>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="leave" <%= leaveEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="leave">Enable Leave Channel</label>
+            </div>
+            <select class="select-menu" id="leaveChannel">
+                <% guild.channels.cache.forEach(channel => { %>
+                    <option value="<%= channel.id %>" <%= leaveChannelName === channel.name ? 'selected' : '' %>><%= channel.name %></option>
+                <% }); %>
+            </select>
+            <button class="save-button" onclick="saveLeaveChannel()">Save Channel</button>
+        </div>
+
+        <!-- Boost Section -->
+        <div id="boostSection" class="section" style="display: none;">
+            <h3>Boost Channel</h3>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="boost" <%= boostEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="boost">Enable Boost Channel</label>
+            </div>
+            <select class="select-menu" id="boostChannel">
+                <% guild.channels.cache.forEach(channel => { %>
+                    <option value="<%= channel.id %>" <%= boostChannelName === channel.name ? 'selected' : '' %>><%= channel.name %></option>
+                <% }); %>
+            </select>
+            <button class="save-button" onclick="saveBoostChannel()">Save Channel</button>
+        </div>
+
+        <!-- Log Channel Section -->
+        <div id="logChannelSection" class="section" style="display: none;">
+            <h3>Log Channel</h3>
+            <div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="log" <%= logEnabled ? 'checked' : '' %>>
+                    <span class="slider"></span>
+                </label>
+                <label for="log">Enable Log Channel</label>
+            </div>
+            <select class="select-menu" id="logChannel">
+                <% guild.channels.cache.forEach(channel => { %>
+                    <option value="<%= channel.id %>" <%= logChannelName === channel.name ? 'selected' : '' %>><%= channel.name %></option>
+                <% }); %>
+            </select>
+            <button class="save-button" onclick="saveLogChannel()">Save Channel</button>
+        </div>
+
+        <!-- Audit Log Section -->
+        <div id="auditLogSection" class="section" style="display: none;">
+            <h3>Audit Log</h3>
+            <button class="save-button" onclick="showLogs()">Show Logs</button>
+            <div id="logDisplaySection" style="display: none;">
+                <ul id="logList"></ul>
+            </div>
+        </div>
+    </div>
+	
+   <script>
+        document.onkeydown = e => {
+    if (e.key === "F12") {
+        showAlert("Don't try to inspect element");
+        return false;
+    }
+    if (e.ctrlKey && e.key === "u") {
+        showAlert("Don't try to view page source");
+        return false;
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === "I") {
+        showAlert("Don't try to open developer tools");
+        return false;
+    }
+};
+
+document.oncontextmenu = e => {
+    showAlert("Right-click is disabled");
+    return false;
+};
+            function showLogs() {
+        fetch('/server/<%= guild.id %>/logs')
+            .then(response => response.json())
+            .then(data => {
+                const logSection = document.getElementById('logSection');
+                const logList = document.getElementById('logList');
+                logList.innerHTML = '';  
+                
+                data.logs.forEach(log => {
+                    const logItem = document.createElement('li');
+                    logItem.innerHTML = `<strong>${log.log_title}</strong> - ${log.log_description} (${new Date(log.log_timestamp).toLocaleString()})`;
+                    logList.appendChild(logItem);
+                });
+
+                logSection.style.display = 'block'; 
+            })
+            .catch(err => {
+                console.error('Error fetching logs:', err);
+            });
+    }
+
+
+function showAlert(message) {
+    const alertBox = document.getElementById('customAlert');
+    const alertMessage = document.getElementById('alertMessage');
+    const timeoutLine = alertBox.querySelector('.timeout-line');
+    alertMessage.textContent = message;
+    timeoutLine.style.transition = 'none';
+    timeoutLine.style.width = '100%';
+    timeoutLine.offsetHeight;
+    timeoutLine.style.transition = 'width 3s linear';
+    setTimeout(() => {
+        timeoutLine.style.width = '0';
+    }, 100); 
+    alertBox.classList.remove('hide');
+    alertBox.classList.add('show');
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+        alertBox.classList.add('hide');
+    }, 3000);
+}
+
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('visible');
+            document.getElementById('mainContent').classList.toggle('with-sidebar');
+        }
+        function saveSettings() {
+            const levels = document.getElementById('levels').checked;
+            const antilinks = document.getElementById('antilinks').checked;
+            const antiinvite = document.getElementById('antiinvite').checked;
+            const antispam = document.getElementById('antispam').checked;
+            fetch('/server/<%= guild.id %>/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    levels: levels ? 'enable' : 'disable',
+                    antilinks: antilinks ? 'enable' : 'disable',
+                    antiinvite: antiinvite ? 'enable' : 'disable',
+                    antispam: antispam ? 'enable' : 'disable'
+                }),
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Settings updated successfully');
+                } else {
+                    showAlert('Error updating settings');
+                }
+            });
+        }
+function addChannel() {
+    const channel = document.getElementById('channel').value;
+    fetch('/server/<%= guild.id %>/add-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ channel }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Channel added successfully');
+            location.reload(); 
+        } else {
+            showAlert('Error adding channel');
+        }
+    });
+}
+
+function removeChannel() {
+    const channel = document.getElementById('channel').value;
+    fetch('/server/<%= guild.id %>/remove-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ channel }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Channel removed successfully');
+            location.reload();
+        } else {
+            showAlert('Error removing channel');
+        }
+    });
+}
+
+function removeAllowedChannel(channelId) {
+    fetch('/server/<%= guild.id %>/remove-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ channel: channelId }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Channel removed successfully');
+            location.reload();
+        } else {
+            showAlert('Error removing channel');
+        }
+    });
+}
+
+		
+	function saveBoostChannel() {
+    const boost = document.getElementById('boost').checked;
+    const boostChannel = document.getElementById('boostChannel').value;
+    fetch('/server/<%= guild.id %>/boost-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            boost: boost ? 'enable' : 'disable',
+            channel: boostChannel
+        }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Boost channel settings updated successfully');
+        } else {
+            showAlert('Error updating boost channel settings');
+        }
+    });
+}
+
+
+function addWord() {
+    const word = document.getElementById('word').value;
+    fetch('/server/<%= guild.id %>/add-word', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ word }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Word added successfully');
+            location.reload();
+        } else {
+            showAlert('Error adding word');
+        }
+    });
+}
+
+function removeWord(word) {
+    fetch('/server/<%= guild.id %>/remove-word', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ word }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Word removed successfully');
+            location.reload();
+        } else {
+            showAlert('Error removing word');
+        }
+    });
+}
+
+function saveWelcomeChannel() {
+    const welcome = document.getElementById('welcome').checked;
+    const welcomeChannel = document.getElementById('welcomeChannel').value;
+    fetch('/server/<%= guild.id %>/welcome-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            welcome: welcome ? 'enable' : 'disable',
+            channel: welcomeChannel
+        }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Welcome channel settings updated successfully');
+        } else {
+            showAlert('Error updating welcome channel settings');
+        }
+    });
+}
+        
+        function saveLeaveChannel() {
+    const leave = document.getElementById('leave').checked;
+    const leaveChannel = document.getElementById('leaveChannel').value;
+    fetch('/server/<%= guild.id %>/leave-channel', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            leave: leave ? 'enable' : 'disable',
+            channel: leaveChannel
+        }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Leave channel settings updated successfully');
+        } else {
+            showAlert('Error updating leave channel settings');
+        }
+    });
+}
+
+function saveWelcomeMessage() {
+    const welcomeMessage = document.getElementById('welcomeMessage').value;
+    fetch('/server/<%= guild.id %>/welcome-message', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: welcomeMessage }),
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Welcome message updated successfully');
+        } else {
+            showAlert('Error updating welcome message');
+        }
+    });
+}
+        
+            function saveLogChannel() {
+        const log = document.getElementById('log').checked;
+        const logChannel = document.getElementById('logChannel').value;
+        fetch('/server/<%= guild.id %>/log-channel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                log: log ? 'enable' : 'disable',
+                channel: logChannel
+            }),
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Log channel settings updated successfully');
+            } else {
+                showAlert('Error updating log channel settings');
+            }
+        });
+    }
+
+let currentSection = null;
+
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+
+    if (currentSection && currentSection !== section) {
+        currentSection.style.display = "none";
+    }
+
+    if (section.style.display === "none" || section.style.display === "") {
+        section.style.display = "block";
+        currentSection = section;
+    } else {
+        section.style.display = "none";
+        currentSection = null;
+    }
+}
+
+
+
+function showLogs() {
+    const logSection = document.getElementById('logDisplaySection');
+    fetch('/server/<%= guild.id %>/logs')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const logList = document.getElementById('logList');
+            logList.innerHTML = '';
+            
+            if (data.logs && data.logs.length > 0) {
+                data.logs.forEach(log => {
+                    const logItem = document.createElement('li');
+                    logItem.innerHTML = `<strong>${log.log_title}</strong> - ${log.log_description} (${new Date(log.log_timestamp).toLocaleString()})`;
+                    logList.appendChild(logItem);
+                });
+            } else {
+                logList.innerHTML = '<li>No logs available.</li>';
+            }
+
+            logSection.style.display = 'block';
+        })
+        .catch(err => {
+            console.error('Error fetching logs:', err);
+            alert('Failed to load logs. Please try again later.');
+        });
+}
+let timeout;
+        document.getElementById('searchBar').addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const searchTerm = this.value.toLowerCase();
+                document.querySelectorAll('.server-card').forEach(card => {
+                    const serverName = card.querySelector('.server-name').textContent.toLowerCase();
+                    const serverId = card.querySelector('.server-id').textContent.toLowerCase();
+                    if (serverName.includes(searchTerm) || serverId.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }, 300); 
+        });
+        document.onkeydown = e => {
+    if (e.key === "F12") {
+        showAlert("Don't try to inspect element");
+        return false;
+    }
+    if (e.ctrlKey && e.key === "u") {
+        showAlert("Don't try to view page source");
+        return false;
+    }
+    if (e.ctrlKey && e.shiftKey && e.key === "I") {
+        showAlert("Don't try to open developer tools");
+        return false;
+    }
+};
+
+document.oncontextmenu = e => {
+    showAlert("Right-click is disabled");
+    return false;
+};
+
+
+document.getElementById('contactForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    showAlert('Your message has been submitted successfully!');  // Use the existing showAlert function
+    document.getElementById('contactForm').reset();
+});
+
+function showAlert(message) {
+    const alertBox = document.getElementById('customAlert');
+    const alertMessage = document.getElementById('alertMessage');
+    const timeoutLine = alertBox.querySelector('.timeout-line');
+    alertMessage.textContent = message;
+    
+    timeoutLine.style.transition = 'none';  // Reset animation
+    timeoutLine.style.width = '100%';
+    timeoutLine.offsetHeight;  // Trigger a reflow
+    timeoutLine.style.transition = 'width 3s linear';  // Animate line
+    setTimeout(() => {
+        timeoutLine.style.width = '0';
+    }, 100); 
+
+    alertBox.classList.remove('hide');
+    alertBox.classList.add('show');
+    
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+        alertBox.classList.add('hide');
+    }, 3000);  // Hide alert after 3 seconds
+}
+
+
+
+    </script>
+</body>
+</html>

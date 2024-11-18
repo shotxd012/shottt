@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vazha Bot Status</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/status.css">
+</head>
+<body>
+    <main class="main-content">
+        <h1>Vazha Bot Status</h1>
+        <img src="<%= botData.logo || 'https://i.imgur.com/FYYcF5j.png' %>" alt="Vazha Bot Logo" class="bot-logo">
+        
+        <section class="status-grid">
+            <div class="status-item">
+                <h3>Ping</h3>
+                <p id="ping"><%= botData.ping || 'N/A' %> ms</p>
+            </div>
+            <div class="status-item">
+                <h3>Total Servers</h3>
+                <p id="totalServers"><%= botData.totalGuilds || 'N/A' %></p>
+            </div>
+            <div class="status-item">
+                <h3>Total Users</h3>
+                <p id="totalUsers"><%= botData.totalMembers || 'N/A' %></p>
+            </div>
+            <div class="status-item">
+                <h3>Total Channels</h3>
+                <p id="totalChannels"><%= botData.totalChannels || 'N/A' %></p>
+            </div>
+            <div class="status-item">
+                <h3>Shard </h3>
+                <p id="Shard"> #2 </p>
+            </div>
+            <div class="status-item">
+                <h3>Uptime</h3>
+                <p id="uptime"><%= botData.uptime || 'N/A' %></p>
+            </div>
+        </section>
+
+        <div class="chart-container">
+            <div class="chart-title">Ping History</div>
+            <canvas id="pingChart"></canvas>
+        </div>
+
+        <a href="/" class="button">Go Home</a>
+    </main>
+
+    <div id="customAlert" class="alert">
+        <span id="alertMessage"></span>
+    </div>
+
+    <script>
+        const pingHistory = <%- JSON.stringify(pingHistory) %>;
+        const labels = pingHistory.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+        const data = pingHistory.map(entry => entry.ping);
+
+        const ctx = document.getElementById('pingChart').getContext('2d');
+
+        const pingChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Ping (ms)',
+                    data: data,
+                    borderColor: '#13bb56',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Ping (ms)'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const time = context.label;
+                                const ping = context.raw;
+                                return `Time: ${time}, Ping: ${ping} ms`;
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        async function updatePing() {
+            try {
+                const response = await fetch('/api/ping');
+                const data = await response.json();
+                document.getElementById('ping').textContent = `${data.ping} ms`;
+                addPingToChart(data.ping);
+            } catch (error) {
+                console.error('Error fetching ping:', error);
+            }
+        }
+
+        function addPingToChart(ping) {
+            const currentTime = new Date().toLocaleTimeString();
+            pingChart.data.labels.push(currentTime);
+            pingChart.data.datasets[0].data.push(ping);
+            if (pingChart.data.labels.length > 20) {
+                pingChart.data.labels.shift();
+                pingChart.data.datasets[0].data.shift();
+            }
+            pingChart.update();
+        }
+
+        document.onkeydown = e => {
+            if (e.key === "F12" || (e.ctrlKey && e.key === "u") || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+                showAlert("This action is not allowed");
+                return false;
+            }
+        };
+
+        document.addEventListener("contextmenu", e => {
+            showAlert("Right click is disabled");
+            e.preventDefault();
+        });
+
+        function showAlert(message) {
+            const alert = document.getElementById("customAlert");
+            const alertMessage = document.getElementById("alertMessage");
+            alertMessage.textContent = message;
+            alert.classList.add("show");
+            setTimeout(() => {
+                alert.classList.remove("show");
+            }, 3000);
+        }
+
+        // Update ping every 5 seconds
+        setInterval(updatePing, 1000);
+    </script>
+</body>
+</html>

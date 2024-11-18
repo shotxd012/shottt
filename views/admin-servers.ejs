@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Manager</title>
+    <style>
+        :root {
+            --primary-color: #13bb56;
+            --background-color: #191a1d;
+            --sidebar-color: #121313;
+            --text-color: #ffffff;
+            --text-muted: #4cde2d;
+            --card-background: #101113;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .user-details h2 {
+            font-size: 16px;
+        }
+        
+        .user-details p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: var(--text-color);
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item svg {
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: var(--card-background);
+            color: var(--text-color);
+        }
+        
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .server-card {
+            background-color: var(--card-background);
+            border-radius: 5px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .server-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .server-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
+        .server-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .server-info {
+            flex: 1;
+        }
+        
+        .server-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .server-id {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .manage-btn {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .manage-btn:hover {
+            background-color: #09db2500;
+            transform: scale(1.05);
+        }
+
+        .manage-btn.loading {
+            font-size: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .manage-btn.loading::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+            }
+            
+            .user-info {
+                margin-bottom: 0;
+            }
+            
+            .user-details p {
+                display: none;
+            }
+            
+            nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--sidebar-color);
+                padding: 10px;
+            }
+            
+            nav.show {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                padding-top: 80px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .server-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .alert {
+            position: fixed;
+            top: 50px; 
+            right: -100%; 
+            background-color: lightgreen;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0; 
+            transition: right 0.5s ease, opacity 0.5s ease;
+        }
+
+        .alert.show {
+            right: 40px;
+            opacity: 1;
+        }
+
+        .alert.hide {
+            right: -100%;
+            opacity: 0;
+        }
+
+        .alert .timeout-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.3);
+            width: 100%;
+            transition: width 3s linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="customAlert" class="alert hide">
+        <span id="alertMessage"></span>
+        <div class="timeout-line"></div>
+    </div>
+
+    <!-- Sidebar with user image and buttons -->
+    <aside class="sidebar">
+        <!-- User Info -->
+        <div class="user-info">
+            <!-- Dynamically load the user avatar -->
+            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="User Avatar" class="user-avatar">
+            <div class="user-details">
+                <!-- Dynamically load the user name (adjust as needed) -->
+                <h2><%= user.username %></h2>
+                <p>User</p>
+            </div>
+        </div>
+        <button class="menu-toggle">☰</button>
+        <nav>
+            <!-- Navigation links -->
+            <a href="/" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Home
+            </a>
+            <a href="/status" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                Status
+            </a>
+            <a href="/logout" class="nav-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <h1>Servers You Can Manage</h1>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="searchBar" placeholder="Search servers..." class="search-input">
+        </div>
+
+        <!-- Server Grid / Cards for displaying servers -->
+    <div class="server-grid" id="serverContainer">
+        <% user.guilds.forEach(guild => { %>
+        <div class="server-card">
+            <div class="server-header">
+                <img src="https://cdn.discordapp.com/icons/<%= guild.id %>/<%= guild.icon %>.png" alt="<%= guild.name %> icon" class="server-icon">
+                <div class="server-info">
+                    <div class="server-name"><%= guild.name %></div>
+                    <div class="server-id">ID: <%= guild.id %></div>
+                </div>
+            </div>
+            <button class="manage-btn" data-href="/server/<%= guild.id %>">Manage</button>
+        </div>
+        <% }) %>
+    </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+                document.querySelectorAll('.manage-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                this.classList.add('loading');
+                setTimeout(() => {
+                    window.location.href = this.getAttribute('data-href');
+                }, 2000); // Simulate a 2-second loading time
+            });
+        });
+        let timeout;
+        document.getElementById('searchBar').addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const searchTerm = this.value.toLowerCase();
+                document.querySelectorAll('.server-card').forEach(card => {
+                    const serverName = card.querySelector('.server-name').textContent.toLowerCase();
+                    const serverId = card.querySelector('.server-id').textContent.toLowerCase();
+                    if (serverName.includes(searchTerm) || serverId.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }, 300); // 300ms debounce
+        });
+
+        document.onkeydown = e => {
+            if (e.key === "F12") {
+                showAlert("Don't try to inspect element");
+                return false;
+            }
+            if (e.ctrlKey && e.key === "u") {
+                showAlert("Don't try to view page source");
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.key === "I") {
+                showAlert("Don't try to open developer tools");
+                return false;
+            }
+        };
+
+        document.oncontextmenu = e => {
+            showAlert("Right-click is disabled");
+            return false;
+        };
+
+        function showAlert(message) {
+            const alertBox = document.getElementById('customAlert');
+            const alertMessage = document.getElementById('alertMessage');
+            const timeoutLine = alertBox.querySelector('.timeout-line');
+            alertMessage.textContent = message;
+            
+            timeoutLine.style.transition = 'none';  // Reset animation
+            timeoutLine.style.width = '100%';
+            timeoutLine.offsetHeight;  // Trigger a reflow
+            timeoutLine.style.transition = 'width 3s linear';  // Animate line
+            setTimeout(() => {
+                timeoutLine.style.width  = '0';
+            }, 100); 
+
+            alertBox.classList.remove('hide');
+            alertBox.classList.add('show');
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+                alertBox.classList.add('hide');
+            }, 3000);  // Hide alert after 3 seconds
+        }
+
+        // Toggle mobile menu
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('nav').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>
